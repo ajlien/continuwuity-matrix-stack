@@ -1,0 +1,59 @@
+mydomain.com {
+    handle_path /.well-known/matrix/* {
+	header * {
+            Access-Control-Allow-Origin "*"
+            Access-Control-Allow-Methods "GET, POST, OPTIONS"
+            Access-Control-Allow-Headers "Authorization"
+            Content-Type "application/json"
+	}
+
+	root * /static/well-known/matrix
+	file_server
+    }
+    # Return 404 for all other paths
+    handle /* {
+        respond "Not Found" 404
+    }
+}
+
+matrix.mydomain.com, mydomain.com:8448 {
+    # Logging configuration
+    log {
+        output file /var/log/caddy/access.log
+    }
+
+    # Security Headers (add more as needed)
+    header {
+        Strict-Transport-Security "max-age=63072000;" # Enable HSTS
+        X-Frame-Options "DENY"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+        Permissions-Policy "interest-cohort=()"
+    }
+
+    # Proxy all Matrix traffic to Continuwuity
+    # Use Unix socket for performance if Caddy and Continuwuity are on the same host
+    reverse_proxy unix//run/continuwuity/continuwuity.sock {
+        header_up Host {upstream_hostport}
+    }
+}
+
+social.mydomain.com {
+  root * /dist
+  try_files {path} / index.html
+  file_server
+
+  reverse_proxy cinny:80
+}
+
+# Livekit
+livekit.mydomain.com {
+	# Routes requests for the token services
+	@jwt path /sfu/get* /healthz* /get_token*
+	route @jwt {
+		reverse_proxy rtc-jwt:8081
+	}
+
+	# Routes all other requests to the livekit server
+	reverse_proxy rtc-livekit:7880
+}

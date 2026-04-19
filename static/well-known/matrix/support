@@ -1,0 +1,9 @@
+{
+    "contacts": [
+                    {
+                        "matrix_id": "@admin:mydomain.com",
+                        "email_address": "[email protected]",
+                        "role": "m.role.admin"
+                    }
+                ]
+}

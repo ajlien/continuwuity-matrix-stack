@@ -1,0 +1,61 @@
+services:
+    continuwuity:
+        image: forgejo.ellis.link/continuwuation/continuwuity:latest
+        restart: unless-stopped
+        container_name: continuwuity
+        command: /sbin/conduwuit
+        volumes:
+            - /etc/resolv.conf:/etc/resolv.conf:ro  # Avoid DNS performance issues
+            - ./continuwuity.toml:/var/lib/continuwuity/continuwuity.toml:ro  # Config file
+            - ./data:/var/lib/continuwuity  # Data
+            - /run/continuwuity:/run/continuwuity  # Unix socket
+        environment:
+            CONDUWUIT_DATABASE_PATH: "/var/lib/continuwuity"
+            CONDUWUIT_CONFIG: '/var/lib/continuwuity/continuwuity.toml' # Still currently in-use
+            CONTINUWUITY_CONFIG: '/var/lib/continuwuity/continuwuity.toml' # Added for futureproofing
+    caddy:
+        image: caddy:latest
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+            - "8448"  # Matrix federation
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile:ro
+            - ./static:/static:ro  # well-known files
+            - caddy_data:/data
+            - caddy_config:/config
+            - acme_challenges:/var/www/challenges
+            - /run/continuwuity:/run/continuwuity  # Unix socket
+    cinny:
+        image: ajbura/cinny:latest
+        container_name: cinny
+        restart: unless-stopped
+        volumes:
+            - ./cinny_config.json:/app/config.json:ro
+    rtc-jwt:
+        image: ghcr.io/element-hq/lk-jwt-service:latest
+        container_name: rtc-jwt
+        restart: unless-stopped
+        environment:
+            LIVEKIT_JWT_BIND: 0.0.0.0:8081
+            LIVEKIT_URL: wss://livekit.mydomain.com
+            LIVEKIT_FULL_ACCESS_HOMESERVERS: matrix.mydomain.com
+            LIVEKIT_KEY: MyLiveKitKey
+            LIVEKIT_SECRET: MyLiveKitKeyValue
+        network_mode: host
+    rtc-livekit:
+        image: livekit/livekit-server:latest
+        container_name: rtc-livekit
+        restart: unless-stopped
+        command: --config /etc/livekit.yml
+        volumes:
+            - ./livekit.yml:/etc/livekit.yml:ro
+        ports:
+            - "7881:7881"
+            - "50100-50200:50100-50200/udp"
+
+volumes:
+    caddy_data:
+    caddy_config:
+    acme_challenges:

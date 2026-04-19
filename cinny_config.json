@@ -1,0 +1,11 @@
+{
+  "defaultHomeserver": 0,
+  "homeserverList": [
+    "mydomain.com"
+  ],
+  "allowCustomHomeservers": false,
+  "features": {
+    "registration": true,
+    "guest_access": false
+  }
+}

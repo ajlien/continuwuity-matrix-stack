@@ -1,0 +1,38 @@
+[global]
+
+server_name = "mydomain.com"
+unix_socket_path = "/run/continuwuity/continuwuity.sock"
+unix_socket_perms = 666
+database_path = "/var/lib/continuwuity"
+new_user_displayname_suffix = ""
+dns_cache_entries = 32768
+dns_timeout = 60
+query_over_tcp_only = true
+allow_registration = true
+registration_token = "your_servers_unique_registration_token"
+allow_federation = true
+trusted_servers = ["envs.net", "beeper.com", "matrix.org"]
+query_trusted_key_servers_first = false
+forbidden_remote_server_names = [".*"]
+url_preview_domain_contains_allowlist = ["*"]
+url_preview_domain_explicit_allowlist = ["*"]
+url_preview_url_contains_allowlist = ["*"]
+url_preview_max_spider_size = 512000
+url_preview_timeout = 60
+url_preview_check_root_domain = true
+
+[global.tls]
+
+[global.well_known]
+
+client = "https://matrix.mydomain.com"
+server = "matrix.mydomain.com:443"
+
+[global.blurhashing]
+
+[global.matrix_rtc]
+
+[global.ldap]
+
+require_email_for_registration = true
+require_email_for_token_registration = true
