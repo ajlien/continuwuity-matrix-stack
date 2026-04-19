@@ -1,6 +1,6 @@
-# "Batteries Included" Social Space using Matrix
+# Continuwuity Matrix Stack: a "batteries included" social space using Matrix
 
-This is a quick and dirty playbook for deploying a self-hosted social space using Matrix.
+This is a quick-and-dirty playbook for deploying a self-hosted social space using Matrix.
 
 The intended use case is a private, invite-only community resembling Discord or Slack. It is very performant for the small community sizes tested, but should continue to be relatively resource light for larger communities if federation with other Matrix homeservers remains disabled.
 
@@ -32,6 +32,7 @@ Plenty of excellent guides for self-hosting Matrix already exist. These typicall
     - 50300:50400 (UDP)
 4. A domain name registered, e.g. `example.com`.
 5. Public DNS records pointing to the registered domain:
+
 | Type    | From                   | To                         |
 |---------|------------------------|----------------------------|
 | `A`     | `example.com`          | host's public IPv4 address |
